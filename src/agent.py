@@ -21,7 +21,7 @@ class Agent:
         self.trainer = QTrainer(self.model, lr=LR, gamma=self.gamma)
 
     def get_state(self, game):
-        head = game.snake(0)
+        head = game.snake[0]
         point_l = Point(head.x - 20, head.y)
         point_r = Point(head.x + 20, head.y)
         point_u = Point(head.x, head.y - 20)
@@ -54,14 +54,14 @@ class Agent:
             dir_d,
 
             game.food.x<game.head.x,
-            game.food.x>game.heda.x,
+            game.food.x>game.head.x,
             game.food.y<game.head.y,
             game.food.y>game.head.y
         ]
         return np.array(state,dtype=int)
 
     def remember(self, state, action, reward, next_state, done):
-        self.memory.append(state, action, reward, next_state, done)
+        self.memory.append((state, action, reward, next_state, done))
 
     def train_long_memory(self):
         if len(self.memory) > BATCH_SIZE:
@@ -98,7 +98,7 @@ def train():
     agent = Agent()
     game = SnakeGame()
 
-    while True:
+    while agent.n_games < 1000:
         state_old = agent.get_state(game)
 
         final_move = agent.get_action(state_old)
@@ -125,7 +125,7 @@ def train():
             total_score += score
             mean_score = total_score/agent.n_games
             plot_mean_scores.append(mean_score)
-            plot(plot_scores, plot_mean_scores)
+    plot(plot_scores, plot_mean_scores)
 
 if __name__ == '__main__':
     train()
